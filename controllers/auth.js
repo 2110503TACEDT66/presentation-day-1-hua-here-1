@@ -31,7 +31,7 @@ exports.login = async (req, res, next) => {
         // Check for user
         const user = await User.findOne({email}).select('+password');
         if (!user) {
-            return res.status(400).json({success: false, msg: 'Invalid credentials'});
+            return res.status(400).json({success: false, msg: 'This user does not exist'});
         }
 
         // Check if password matches
@@ -68,8 +68,15 @@ const sendTokenResponse = (user, StatusCode, res) => {
 //@route   POST /api/v1/auth/me
 //@access  Private
 exports.getMe = async (req, res, next) => {
-    const user = await User.findById(req.user.id);
-    res.status(200).json({success: true, data: user});
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (!user) return res.status(404).json({success: false, msg: 'User not found'});
+        res.status(200).json({success: true, data: user});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({success: false, msg: "Internal Server Error"});
+    }
 }
 
 //@desc    Logout user // clear cookies
