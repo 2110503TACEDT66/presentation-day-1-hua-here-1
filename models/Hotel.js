@@ -34,5 +34,29 @@ const HotelSchema = new mongoose.Schema({
     }
 
 
-}) ;
+},{
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
+
+}
+) ;
+HotelSchema.pre('deleteOne',{document:true,query:false},async function(next){
+    console.log(`Rooms and bookings being removed from hotel ${this.id}`);
+    await this.model('Room').deleteMany({hotel:this._id});
+    await this.model('Booking').deleteMany({hotel:this._id});
+    next();
+})
+HotelSchema.virtual('rooms',{
+    ref:'Room',
+    localField:'_id',
+    foreignField:'hotel',
+    justOne:false
+});
+HotelSchema.virtual('bookings',{
+    ref:'Booking',
+    localField:'_id',
+    foreignField:'hotel',
+    justOne:false
+});
+
 module.exports=mongoose.model('Hotel',HotelSchema);
