@@ -2,6 +2,12 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const {xss} = require('express-xss-sanitizer');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const cors = require('cors');
 
 // Load env vars
 dotenv.config({path:'./config/config.env'});
@@ -21,6 +27,29 @@ app.use(express.json());
 
 // Cookie parser
 app.use(cookieParser());
+
+// Sanitize data
+app.use(mongoSanitize());
+
+//Set Security headers
+app.use(helmet());
+
+// XSS Protection
+app.use(xss());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100
+});
+
+app.use(limiter);
+
+// Prevent hpp param pollutions
+app.use(hpp());
+
+// Enable CORS
+app.use(cors());
 
 app.use('/api/v1/hotels' , hotels);
 app.use('/api/v1/auth', auth);
