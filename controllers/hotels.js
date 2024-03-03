@@ -1,19 +1,56 @@
-exports.getHotels = (req,res,next) => {
-    res.status(200).json({success: true, msg: 'Get all hotels'});
+const Hotel = require('../models/Hotel.js');
+
+exports.getHotels =async (req,res,next) => {
+    try{
+        const hotels = await Hotel.find();
+        res.status(200).json({success: true,count:hotels.length,data:hotels});
+    }catch(err){
+        res.status(400).json({success:false});
+    }
 }
 
-exports.getHotel = (req,res,next) => {
-    res.status(200).json({success: true, msg: `Get hotel${req.params.id}`});
+exports.getHotel = async(req,res,next) => {
+    try{
+        const hotel = await Hotel.findById(req.params.id);
+        if(!hotel){
+            return res.status(400).json({success:false});
+        }
+
+    res.status(200).json({success: true, data:hotel});
+    }catch(err){
+        res.status(400).json({success:false});
+    }
 }
 
-exports.createHotel = (req,res,next) => {
-    res.status(200).json({success: true, msg: 'Create a hotel'});
+exports.createHotel = async (req,res,next) => {
+    const hotel = await Hotel.create(req.body);
+    res.status(201).json({success: true, data:hotel});
 }
 
-exports.updateHotel = (req,res,next) => {
-    res.status(200).json({success: true, msg: `Update hotel${req.params.id}`});
+exports.updateHotel = async (req,res,next) => {
+    try{
+        const hotel = await Hotel.findByIdAndUpdate(req.params.id,req.body,{
+            new: true,
+            runValidators:true
+        });
+        if(!hotel){
+            return res.status(400).json({success:false});
+        }
+        res.status(200).json({success: true, data : hotel});
+    }catch(err){
+        res.status(400).json({success:false});
+    }
 }
 
-exports.deleteHotel = (req,res,next) => {
-    res.status(200).json({success: true, msg: `Delete hotel${req.params.id}`});
+exports.deleteHotel = async (req,res,next) => {
+    try{
+        const hotel = await Hotel.findByIdAndDelete(req.params.id);
+        if(!hotel){
+            return res.status(400).json({success:false});
+         }
+         res.status(200).json({success:true,data: {}});
+    
+    }catch(err){
+        res.status(400).json({success:false});
+    }
 }
