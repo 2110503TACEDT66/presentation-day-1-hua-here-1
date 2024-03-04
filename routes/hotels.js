@@ -6,8 +6,8 @@ const roomRouter=require('./rooms');
 const router = express.Router();
 
 const {protect, authorize} = require('../middleware/auth');
-router.use('/:hotelId/bookings/',bookingRouter);
-router.use('/:hotelId/rooms/',roomRouter);
+router.use('/:hotelId/bookings',bookingRouter);
+router.use('/:hotelId/rooms',roomRouter);
 
 router.route('/').get(getHotels).post(protect, authorize('admin'), createHotel);
 router.route('/:id').get(getHotel).put(protect, authorize('admin'), updateHotel).delete(protect, authorize('admin'), deleteHotel);

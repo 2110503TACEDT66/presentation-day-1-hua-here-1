@@ -1,0 +1,25 @@
+@startuml Manage Room (GET ONE)
+
+header Hotel Booking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Room (GET ONE)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:rooms" as routerRooms
+participant "<<middleware>>\n:auth" as authMiddleware
+participant "<<controllers>>\n:rooms" as controllersRoom
+participant "<<model>>\n:Room" as modelRoom
+database "<<MongoDB>>\n:room" as RoomDatabase
+
+client->server ++:req.get('/rooms/:id')
+server->routerRooms ++:app.use('/rooms/:id', rooms)
+routerRooms -> authMiddleware ++:protect()
+routerRooms -> controllersRoom ++:getRoom()
+controllersRoom->modelRoom ++:findById(req.params.id)
+modelRoom ->RoomDatabase ++: RoomSchema
+RoomDatabase --> modelRoom --: room
+controllersRoom <-- modelRoom --:room
+controllersRoom->client --:response
+
+@enduml

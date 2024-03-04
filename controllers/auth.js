@@ -45,7 +45,24 @@ exports.login = async (req, res, next) => {
     } catch (err) {
         return res.status(401).json({success: false, msg: 'Cannot convert email or password to String'});
     }
-}
+};
+
+exports.removeUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findByIdAndDelete(userId);
+
+        if (!user) {
+            return res.status(404).json({success: false, msg: "User not found"});
+        }
+
+        res.status(200).json({success: true, msg: "User removed already"});
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({success: false, msg: "Internal Server Error"});
+    }
+};
 
 //Get token from model, create cookie and send response
 const sendTokenResponse = (user, StatusCode, res) => {

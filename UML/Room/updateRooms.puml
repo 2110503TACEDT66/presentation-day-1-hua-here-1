@@ -1,0 +1,27 @@
+@startuml Manage Room (PUT)
+
+header Hotel Booking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Room (PUT)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:rooms" as routerRooms
+participant "<<middleware>>\n:auth" as authMiddleware
+participant "<<controllers>>\n:rooms" as controllersRoom
+participant "<<model>>\n:Room" as modelRoom
+database "<<MongoDB>>\n:room" as RoomDatabase
+
+client->server ++:req.put('/rooms/:id')
+server->routerRooms ++:app.use('/rooms/:id', rooms)
+routerRooms -> authMiddleware ++:protect()
+routerRooms -> authMiddleware :authorize('admin')
+routerRooms -> controllersRoom ++:updateRoom()
+controllersRoom->modelRoom ++:findById(req.params.id)
+controllersRoom->modelRoom ++:update(req.body)
+modelRoom ->RoomDatabase ++: RoomSchema
+RoomDatabase --> modelRoom --: room
+controllersRoom <-- modelRoom --:room
+controllersRoom->client --:response
+
+@enduml

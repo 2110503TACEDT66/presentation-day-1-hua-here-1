@@ -51,6 +51,12 @@ exports.addBooking = async(req,res,next)=>{
             return res.status(404).json({success:false,message:`No room with the id of ${req.body.room}`});
         }
 
+        // Check if Room is already Booked
+        const isRoomBooked = await Booking.findOne({room:req.body.room,hotel:req.params.hotelId});
+        if(isRoomBooked){
+            return res.status(400).json({success:false,message:`The room with the id of ${req.body.room} is already booked`});
+        }
+
         req.body.user = req.user.id;
         const existedBooking = await Booking.find({user:req.user.id});
 
@@ -62,11 +68,11 @@ exports.addBooking = async(req,res,next)=>{
         const booking = await Booking.create(req.body);
         res.status(200).json({success:true,data:booking});
 
-        }catch(error){
-            console.log(error);
-            return res.status(500).json({success:false,message:"Cannot create Booking"});
-        }
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({success:false,message:"Cannot create Booking"});
     }
+}
 exports.updateBooking=async(req,res,next)=>{
     try{
         let booking = await Booking.findById(req.params.id);
