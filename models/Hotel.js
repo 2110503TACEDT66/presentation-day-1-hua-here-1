@@ -33,8 +33,7 @@ const HotelSchema = new mongoose.Schema({
         required:[true,'Please add a region']
     },
     picture:{
-        type:String,
-        required: [true,'Please add a picture']
+        type:String
     }
 
 
