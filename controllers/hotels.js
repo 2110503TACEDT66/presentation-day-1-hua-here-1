@@ -81,9 +81,9 @@ exports.createHotel = async (req,res,next) => {
 
         // Create 3 based rooms
         const roomsData = [
-            { roomNo: '101', roomType: 'Standard', price: generatedRandomPrice(1000,2000) },
-            { roomNo: '102', roomType: 'Standard', price: generatedRandomPrice(1000,2000) },
-            { roomNo: '103', roomType: 'Luxury', price: generatedRandomPrice(4000,5000) }
+            { roomNo: '101', roomType: 'Standard', price: generatedRandomPrice(1000,2000), picture: '/Images/room/room-stand.jpg' },
+            { roomNo: '102', roomType: 'Standard', price: generatedRandomPrice(1000,2000), picture: '/Images/room/room-stand.jpg'},
+            { roomNo: '103', roomType: 'Luxury', price: generatedRandomPrice(4000,5000), picture: '/Images/room/room-lux.jpg' }
         ];
 
         const roomPromises = roomsData.map((roomData) => {
